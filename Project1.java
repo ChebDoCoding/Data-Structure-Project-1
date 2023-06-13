@@ -1,8 +1,8 @@
 /*
 1. Jawit Poopradit 6480087
-2.
-3.
-4. 
+2. Possathorn Sujipisut 6480274
+3. Piyakorn Rodthanong 6480569
+4. Phasin Ploypicha 6480567
 */
 package Project1;
 
