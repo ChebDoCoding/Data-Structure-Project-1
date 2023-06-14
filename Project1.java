@@ -18,27 +18,42 @@ public class Project1 {
         int step = 1;
         String restart;
         while (true){
-            System.out.println("Enter number of white marbles: ");
+            System.out.printf( "=-".repeat(20) + "=");   
+            System.out.printf("\nEnter number of marbles on each side: ");
             try{
                 int amount = Integer.parseInt(sc.next());
                 if(amount < 2) {
-                    System.out.println("It must be at least 2");
+                    System.out.printf("Number of marbles must be more than 2");
                     continue;
                 }
+                System.out.printf( "=-".repeat(20) + "=");
                 Board board = new Board(amount);
-                System.out.printf("Initial >> "); board.printBoard();
-                System.out.println();
+                
+                System.out.printf("\nInitial Board:\n"); 
+                board.printBoard();
+                System.out.printf( "=-".repeat(20) + "=");
+                
                 while(!board.puzzleSolved()){
-                    System.out.printf("Step %d >> Enter marble ID or A to switch to auto mode or Q to end the program = ", step);
+                    //Print current board
+                    System.out.printf("\nCurrent Step: Step %d", step);
+                    System.out.printf("\nCurrent Board: \n");
+                    board.printBoard();
+                    
+                    //Ask for next command                    
+                    System.out.printf("\nEnter marble ID or A to switch to auto mode or Q to end the program");
+                    System.out.printf("\nEnter command: ");
                     String input = sc.next();
+                    System.out.println();
+                    
                     if(!input.equalsIgnoreCase("q")){
+                        System.out.printf("Action done: ");
                         board.move(input);
                         step++;
-                        board.printBoard();
-                        System.out.println();
+                        System.out.printf( "=-".repeat(20) + "=");
                     }
                     else {
                         System.out.println("Terminating Program");
+                        System.out.printf( "=-".repeat(20) + "=");
                         System.exit(0);
                     }
                 }
@@ -93,20 +108,27 @@ class Board {
         }
     }
     public void printBoard(){ //Reference: line 41-53 from https://github.com/felikf/cindys-puzzle/blob/master/src/main/java/com/felix/cindyspuzzle/Puzzle.java#L10
+        //System.out.println("▯▮  ▢▇ ⚪⚫ ○●");  #Saving Symbol For Easier Copying#      
+        //Marble Code
         for (Marble m : Board) {
-            /*if (m.getColor() == 'w'){
-                System.out.printf(m.PrintMarble() + " ");
-            }
-            else if (m.getColor() == 'b'){
-                System.out.printf(m.PrintMarble() + " ");
-            }
-            else (){
-                System.out.printf("__");
-            }*/
             if (m == null) {
                 System.out.print("__ ");
             } else {
                 System.out.print(m.PrintMarble() + " ");
+            }
+        }
+        
+        //Marble Symbol
+        System.out.println();
+        for (Marble m : Board){        
+            if (m == null){
+                System.out.printf("__ ");
+            }
+            else if (m.getColor() == 'w'){
+                System.out.printf("○  ");
+            }
+            else if (m.getColor() == 'b'){
+                System.out.printf("●  ");
             }
         }
         System.out.println();
@@ -129,21 +151,21 @@ class Board {
             if(marb.getColor() == 'w'){
                 if(position+1 < Board.size() && Board.get(position+1) == null){
                     Collections.swap(Board, position, position+1);
-                    System.out.println("Move right");
+                    System.out.printf("Move right\n");
                 }
                 else if(position+2 < Board.size() && Board.get(position+2) == null && Board.get(position+1).getColor() == 'b'){
                     Collections.swap(Board,position,position+2);
-                    System.out.println("Jump right");
+                    System.out.printf("Jump right\n");
                 }
             }
             if(marb.getColor() == 'b'){
                 if(position-1 >= 0 && Board.get(position-1) == null){
                     Collections.swap(Board,position,position-1);
-                    System.out.println("Move left");
+                    System.out.printf("Move left\n");
                 }
                 else if(position-2 >= 0 && Board.get(position-2) == null && Board.get(position-1).getColor() == 'w'){
                     Collections.swap(Board,position,position-2);
-                    System.out.println("Jump left");
+                    System.out.printf("Jump left\n");
                 }
             }
         }
