@@ -46,10 +46,15 @@ public class Project1 {
                     System.out.println();
                     
                     if(!input.equalsIgnoreCase("q")){
-                        System.out.printf("Action done: ");
-                        board.move(input);
-                        step++;
-                        System.out.printf( "=-".repeat(20) + "=");
+                        if(input.equalsIgnoreCase("A")){
+                            board.AutoMode();
+                        }
+                        else {
+                            System.out.printf("Action done: ");
+                            board.move(input,true);
+                            step++;
+                            System.out.printf( "=-".repeat(20) + "=");
+                        }
                     }
                     else {
                         System.out.println("Terminating Program");
@@ -57,7 +62,7 @@ public class Project1 {
                         System.exit(0);
                     }
                 }
-                System.out.println("Done");
+                System.out.println("\nDone");
                 System.out.println("R to restart or Q to end the program");
                 restart = sc.next();
                 if(restart.equalsIgnoreCase("r")){
@@ -95,6 +100,7 @@ class Marble {
 class Board {
     private List<Marble> Board;
     private int size;
+    Stack<List<Marble>> StackBoard = new Stack<>();
     
     public Board(int n){
         Board = new ArrayList<>();
@@ -133,7 +139,19 @@ class Board {
         }
         System.out.println();
     }
-    public void move(String marble){
+    public void move(String marble, boolean printaction){
+        boolean PrintAction = printaction;
+        List<Marble> CopyBoard = new ArrayList<>(); //For saving marble to push and pop in StackBoard
+        for(Marble m : Board){
+            if(m == null){
+                CopyBoard.add(null);
+            }
+            else {
+                CopyBoard.add(new Marble(m.getColor(), m.getMNum())); //add a copy of marble
+            }
+        }
+        StackBoard.push(CopyBoard);
+        
         int position = -1; //Find position of marble Reference: https://stackoverflow.com/questions/39318754/how-to-get-position-of-element-in-arraylist
         for(int i = 0; i < Board.size(); i++){
             Marble m = Board.get(i);
@@ -151,21 +169,33 @@ class Board {
             if(marb.getColor() == 'w'){
                 if(position+1 < Board.size() && Board.get(position+1) == null){
                     Collections.swap(Board, position, position+1);
-                    System.out.printf("Move right\n");
+                    //System.out.printf("Move right\n");
+                    if(PrintAction == true){
+                        System.out.printf("Move right\n");
+                    }
                 }
                 else if(position+2 < Board.size() && Board.get(position+2) == null && Board.get(position+1).getColor() == 'b'){
                     Collections.swap(Board,position,position+2);
-                    System.out.printf("Jump right\n");
+                    //System.out.printf("Jump right\n");
+                    if(PrintAction == true){
+                        System.out.printf("Jump right\n");
+                    }
                 }
             }
             if(marb.getColor() == 'b'){
                 if(position-1 >= 0 && Board.get(position-1) == null){
                     Collections.swap(Board,position,position-1);
-                    System.out.printf("Move left\n");
+                    //System.out.printf("Move left\n");
+                    if(PrintAction == true){
+                        System.out.printf("Move left\n");
+                    }
                 }
                 else if(position-2 >= 0 && Board.get(position-2) == null && Board.get(position-1).getColor() == 'w'){
                     Collections.swap(Board,position,position-2);
-                    System.out.printf("Jump left\n");
+                    //System.out.printf("Jump left\n");
+                    if(PrintAction == true){
+                        System.out.printf("Jump left\n");
+                    }
                 }
             }
         }
@@ -225,5 +255,38 @@ class Board {
             }
         }
         return true;
+    }
+    
+    public boolean AutoMode() {
+        //ArrayList correctPath = new ArrayList();
+        //List<Marble> correctBoard = new ArrayList<>();
+        if(puzzleSolved()){
+            //printBoard();
+            /*for(Object m : correctPath){
+                System.out.println(m);
+            }*/
+            return true;
+        }
+        for(int i = 0; i < Board.size(); i++){
+            if(canMove(i)){
+                String marble = Board.get(i).getMNum();
+                move(marble,false);
+                System.out.println("AutoMove:");
+                printBoard();
+               
+                if (AutoMode()){ //Check if AutoMode is true
+                    return true;
+                }
+                undoMove();
+                System.out.println("UndoMove:");
+                printBoard();
+            }
+        }
+        return false;
+    }
+    public void undoMove(){
+        if(!StackBoard.isEmpty()){
+            Board = StackBoard.pop();
+        }
     }
 }
