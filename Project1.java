@@ -139,8 +139,7 @@ class Board {
         }
         System.out.println();
     }
-    public void move(String marble, boolean printaction){
-        boolean PrintAction = printaction;
+    public void move(String marble, boolean PrintAction){
         List<Marble> CopyBoard = new ArrayList<>(); //For saving marble to push and pop in StackBoard
         for(Marble m : Board){
             if(m == null){
@@ -170,14 +169,14 @@ class Board {
                 if(position+1 < Board.size() && Board.get(position+1) == null){
                     Collections.swap(Board, position, position+1);
                     //System.out.printf("Move right\n");
-                    if(PrintAction == true){
+                    if(PrintAction){
                         System.out.printf("Move right\n");
                     }
                 }
                 else if(position+2 < Board.size() && Board.get(position+2) == null && Board.get(position+1).getColor() == 'b'){
                     Collections.swap(Board,position,position+2);
                     //System.out.printf("Jump right\n");
-                    if(PrintAction == true){
+                    if(PrintAction){
                         System.out.printf("Jump right\n");
                     }
                 }
@@ -186,14 +185,14 @@ class Board {
                 if(position-1 >= 0 && Board.get(position-1) == null){
                     Collections.swap(Board,position,position-1);
                     //System.out.printf("Move left\n");
-                    if(PrintAction == true){
+                    if(PrintAction){
                         System.out.printf("Move left\n");
                     }
                 }
                 else if(position-2 >= 0 && Board.get(position-2) == null && Board.get(position-1).getColor() == 'w'){
                     Collections.swap(Board,position,position-2);
                     //System.out.printf("Jump left\n");
-                    if(PrintAction == true){
+                    if(PrintAction){
                         System.out.printf("Jump left\n");
                     }
                 }
