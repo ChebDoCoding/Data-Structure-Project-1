@@ -16,11 +16,20 @@ public class Project1 {
         board.printBoard();*/
         Scanner sc = new Scanner(System.in);
         int step = 1;
+        boolean solvable = true;
+        boolean autoMode = false;
+        boolean autoModeSuccess = true;
+        int numOfMoveable = 0;
         String restart;
         while (true){
             System.out.printf( "=-".repeat(20) + "=");   
             System.out.printf("\nEnter number of marbles on each side: ");
             try{
+                autoMode = false;
+                solvable = true;
+                //This is used so that if the auto fails then it kicked it out of loop
+                //If auto is a success then the program kicks out of loop anyway cause it is sloved
+                autoModeSuccess = true;
                 int amount = Integer.parseInt(sc.next());
                 if(amount < 2) {
                     System.out.printf("Number of marbles must be more than 2");
@@ -33,7 +42,9 @@ public class Project1 {
                 board.printBoard();
                 System.out.printf( "=-".repeat(20) + "=");
                 
-                while(!board.puzzleSolved()){
+                while(!board.puzzleSolved() && solvable && autoModeSuccess){
+                    numOfMoveable = 0;
+                    
                     //Print current board
                     System.out.printf("\nCurrent Step: Step %d", step);
                     System.out.printf("\nCurrent Board: \n");
@@ -47,7 +58,11 @@ public class Project1 {
                     
                     if(!input.equalsIgnoreCase("q")){
                         if(input.equalsIgnoreCase("A")){
-                            board.AutoMode();
+                            System.out.printf("Starting Auto Mode\n");
+                            System.out.printf( "=-".repeat(20) + "=");
+                            System.out.println();
+                            autoMode = true;
+                            autoModeSuccess = board.AutoMode();                            
                         }
                         else {
                             System.out.printf("Action done: ");
@@ -61,14 +76,41 @@ public class Project1 {
                         System.out.printf( "=-".repeat(20) + "=");
                         System.exit(0);
                     }
+                    //To check if it can move
+                    for(int i = 0; i < amount; i++){
+                        if(board.canMove(i)){
+                            numOfMoveable = numOfMoveable + 1;
+                        }
+                    }
+                    if (numOfMoveable == 0){
+                        solvable = false;
+                    }
                 }
-                System.out.println("\nDone");
-                System.out.println("R to restart or Q to end the program");
-                restart = sc.next();
+                //If solved
+                if (board.puzzleSolved()){
+                    System.out.println("Problem solved");
+                    System.out.printf("\nR to restart or Q to end the program: ");
+                    restart = sc.next();
+                } else{
+                    //If not sovable anymore
+                    //If solving by hand
+                    if (autoMode == false){
+                        System.out.println("\nNo available moves:");
+                        board.printBoard();
+                        System.out.printf("\nR to restart or Q to end the program: ");
+                        restart = sc.next();
+                    } else{
+                        System.out.println("\nNo solution found");
+                        System.out.printf("\nR to restart or Q to end the program: ");
+                        restart = sc.next();
+                    }
+                }
                 if(restart.equalsIgnoreCase("r")){
                     continue;
                 }
                 else if(restart.equalsIgnoreCase("q")){
+                    System.out.println("\nTerminating Program");
+                    System.out.printf( "=-".repeat(20) + "=");
                     System.exit(0);
                 }
             } catch (NumberFormatException e){
@@ -113,6 +155,7 @@ class Board {
             Board.add(new Marble('b',"b"+j));
         }
     }
+    
     public void printBoard(){ //Reference: line 41-53 from https://github.com/felikf/cindys-puzzle/blob/master/src/main/java/com/felix/cindyspuzzle/Puzzle.java#L10
         //System.out.println("▯▮  ▢▇ ⚪⚫ ○●");  #Saving Symbol For Easier Copying#      
         //Marble Code
@@ -272,6 +315,7 @@ class Board {
                 move(marble,false);
                 System.out.println("AutoMove:");
                 printBoard();
+                System.out.printf( "=-".repeat(20) + "=\n");
                
                 if (AutoMode()){ //Check if AutoMode is true
                     return true;
@@ -279,6 +323,7 @@ class Board {
                 undoMove();
                 System.out.println("UndoMove:");
                 printBoard();
+                System.out.printf( "=-".repeat(20) + "=\n");
             }
         }
         return false;
